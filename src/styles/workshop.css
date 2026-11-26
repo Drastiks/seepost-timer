@@ -1,0 +1,1035 @@
+/* ==========================================================================
+   Zone de jeu (Partie haute) :
+   Atelier (gauche) | Comptoir vertical (milieu) | Espace Client (droite)
+   ========================================================================== */
+
+.zone-de-jeu {
+  flex: 1 1 62%;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+.zone-etiquette-fond {
+  position: absolute;
+  top: 7px;
+  right: 12px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: rgba(92, 58, 30, 0.35);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- ATELIER (Gauche — derrière le comptoir) ---------- */
+.atelier {
+  flex: 1.75 1 0;
+  min-width: 0;
+  position: relative;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--bg-atelier);
+  background-image:
+    linear-gradient(rgba(140, 88, 48, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(140, 88, 48, 0.06) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Postes physiques communs */
+.poste {
+  background: #fffdf9;
+  border: 2px solid #cbb99e;
+  border-radius: 13px;
+  box-shadow: 0 4px 12px rgba(60, 36, 17, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.poste-actif {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.18), 0 6px 16px rgba(60, 36, 17, 0.12);
+}
+
+.poste-entete {
+  background: var(--acier);
+  color: #f8fafc;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.79rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.poste-icone {
+  color: #fbbf24;
+  font-size: 0.9rem;
+}
+
+.poste-role {
+  margin-left: auto;
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fde68a;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+/* 1. TAPIS ROULANT (vertical à gauche de l'atelier) */
+.tapis-roulant {
+  flex: 0 0 clamp(148px, 15vw, 198px);
+  height: 100%;
+}
+
+.tapis-piste {
+  flex: 1;
+  position: relative;
+  background: #2d343e;
+  border-left: 6px solid #495363;
+  border-right: 6px solid #495363;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 8px;
+}
+
+.tapis-bande-animee {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.07) 0px,
+    rgba(255, 255, 255, 0.07) 6px,
+    transparent 6px,
+    transparent 24px
+  );
+  background-size: 100% 24px;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.tapis-actif .tapis-bande-animee {
+  animation: tapisDefile 0.65s linear infinite;
+}
+
+/* Sirène lumineuse d'alerte (sans son) sur le tapis roulant */
+.tapis-sirene {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 1.5px solid #475569;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+.sirene-dome {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #475569;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.tapis-bug {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.32), 0 0 22px rgba(239, 68, 68, 0.35);
+  animation: tapisAlerteBord 1.1s ease-in-out infinite;
+}
+
+.tapis-bug .poste-entete {
+  background: linear-gradient(90deg, #7f1d1d, #991b1b);
+}
+
+.tapis-bug .tapis-sirene {
+  background: #450a0a;
+  border-color: #fca5a5;
+}
+
+.tapis-bug .sirene-dome {
+  background: #ff2a2a;
+  box-shadow: 0 0 8px #ff2a2a, 0 0 18px #ef4444, 0 0 28px rgba(239, 68, 68, 0.9);
+  animation: sireneClignote 0.55s ease-in-out infinite alternate;
+}
+
+.tapis-bandeau-alerte {
+  background: repeating-linear-gradient(
+    -45deg,
+    #b91c1c,
+    #b91c1c 8px,
+    #7f1d1d 8px,
+    #7f1d1d 16px
+  );
+  color: #fef2f2;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  padding: 3px 6px;
+  border-bottom: 1.5px solid #fca5a5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  animation: bandeauClignote 1s ease-in-out infinite;
+}
+
+@keyframes sireneClignote {
+  0% {
+    background: #dc2626;
+    transform: scale(0.9);
+    box-shadow: 0 0 5px #ef4444;
+  }
+  100% {
+    background: #ff4d4d;
+    transform: scale(1.18);
+    box-shadow: 0 0 12px #ff2a2a, 0 0 24px #ef4444;
+  }
+}
+
+@keyframes tapisAlerteBord {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25), 0 0 12px rgba(239, 68, 68, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.45), 0 0 26px rgba(239, 68, 68, 0.5);
+  }
+}
+
+@keyframes bandeauClignote {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@keyframes tapisDefile {
+  from {
+    background-position-y: 0;
+  }
+  to {
+    background-position-y: 24px;
+  }
+}
+
+.zone-colis-tapis {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-height: 100%;
+}
+
+/* Colonne droite de l'atelier (Générateur haut / Léo + Toi centre / Centre de tri bas) */
+.atelier-colonne-postes {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* 2. GÉNÉRATEUR (haut) */
+.generateur {
+  flex: 0 0 auto;
+  min-height: 80px;
+  max-height: 108px;
+}
+
+.generateur-compteur {
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  background: #0f172a;
+  color: #38bdf8;
+  padding: 2px 7px;
+  border-radius: 5px;
+  border: 1px solid #334155;
+}
+
+.generateur-actif {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
+}
+
+.generateur-contenu {
+  flex: 1;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  background: linear-gradient(180deg, #f8fafc, #eef2f6);
+}
+
+/* COLLÈGUE LÉO + NOTRE PNJ JOUEUR ("TOI") + BULLE */
+.zone-leo {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 2px 6px;
+}
+
+.bulle {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #c9b597;
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(31, 41, 55, 0.1);
+}
+
+.bulle-leo {
+  width: 100%;
+  max-width: 520px;
+  border-color: #d4a66a;
+  background: #fffdf8;
+}
+
+.bulle-leo::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 42%;
+  transform: translateX(-50%);
+  border-width: 9px 9px 0 9px;
+  border-style: solid;
+  border-color: #d4a66a transparent transparent transparent;
+}
+
+.bulle-leo.bulle-postit {
+  background: #fef9c3;
+  border-color: #ca8a04;
+}
+
+.bulle-leo.bulle-postit::after {
+  border-top-color: #ca8a04;
+}
+
+.bulle-leo.bulle-succes {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+
+.bulle-leo.bulle-succes::after {
+  border-top-color: #22c55e;
+}
+
+.bulle-leo.bulle-erreur {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.bulle-leo.bulle-erreur::after {
+  border-top-color: #ef4444;
+}
+
+.bulle-leo.bulle-indice {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.bulle-leo.bulle-indice::after {
+  border-top-color: #3b82f6;
+}
+
+.bulle-leo-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+.bulle-leo-auteur {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9a3412;
+}
+
+.bulle-leo-etape {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.bulle-leo-texte {
+  font-size: 0.84rem;
+  line-height: 1.38;
+  color: #1f2937;
+  max-height: 74px;
+  overflow-y: auto;
+  white-space: pre-line;
+}
+
+.bulle-leo-actions {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.btn-mini {
+  border: 1px solid #d5c3aa;
+  background: #f8f3ea;
+  color: #4b3421;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-mini:hover {
+  background: #efe3cf;
+}
+
+.btn-mini-indice {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  color: #92400e;
+}
+
+.personnages-atelier {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 22px;
+  min-height: 82px;
+}
+
+.personnage-leo,
+.personnage-joueur {
+  width: 66px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s ease, transform 0.25s ease;
+}
+
+.personnage-leo.leo-absent {
+  width: 58px;
+  height: 72px;
+  opacity: 0.92;
+}
+
+.personnage-joueur.joueur-actif-dom {
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.45));
+}
+
+.acteur-en-deplacement {
+  opacity: 0 !important;
+}
+
+.avatar-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 3. CENTRE DE TRI (bas) */
+.centre-de-tri {
+  flex: 0 0 auto;
+  min-height: 86px;
+  max-height: 108px;
+}
+
+.tri-voyants {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 6px;
+}
+
+.voyant {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #475569;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.voyant-vert.allume {
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+
+.voyant-rouge.allume {
+  background: #ef4444;
+  box-shadow: 0 0 10px #ef4444;
+}
+
+.tri-contenu {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f5f7fa;
+}
+
+.tri-scanner {
+  flex: 1;
+  border: 2px dashed #94a3b8;
+  border-radius: 8px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  min-height: 46px;
+}
+
+.tri-trappe {
+  flex: 0 0 82px;
+  border-radius: 8px;
+  background: #fee2e2;
+  border: 2px solid #fca5a5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #991b1b;
+}
+
+.tri-trappe-label {
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tri-trappe-compteur {
+  font-family: var(--font-code);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* ---------- COMPTOIR VERTICAL (Milieu — entre l'Atelier et l'Espace Client) ---------- */
+.comptoir-vertical {
+  flex: 0 0 clamp(102px, 10vw, 132px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(90deg, #8b572d 0%, #bd844e 14%, #c9925a 50%, #b57b45 86%, #7d4c25 100%);
+  border-left: 3px solid #573317;
+  border-right: 3px solid #573317;
+  box-shadow:
+    inset 0 0 16px rgba(61, 32, 11, 0.25),
+    0 0 14px rgba(0, 0, 0, 0.16);
+  padding: 6px 6px 8px;
+  gap: 6px;
+  position: relative;
+  z-index: 3;
+}
+
+.comptoir-dom-actif {
+  box-shadow:
+    inset 0 0 0 2px rgba(16, 185, 129, 0.6),
+    0 0 18px rgba(16, 185, 129, 0.25);
+}
+
+.comptoir-entete {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 5px;
+  background: rgba(63, 34, 12, 0.44);
+  border: 1px solid rgba(254, 243, 199, 0.28);
+  border-radius: 7px;
+}
+
+.comptoir-clochette {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fef08a, #d97706);
+  border: 1.5px solid #713f12;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.comptoir-titre-bandeau {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  color: #fef3c7;
+}
+
+/* Zones de livraison empilées verticalement sur le comptoir */
+.zone-livraison-conteneur {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.depot-wrapper {
+  flex: 1 1 0;
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.livraison-multi .depot-wrapper {
+  min-height: 68px;
+}
+
+.depot-titre {
+  font-size: 0.63rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #fef3c7;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(45, 22, 6, 0.65);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.zone-client-depot {
+  flex: 1;
+  background: rgba(255, 250, 240, 0.88);
+  border: 2px dashed #6b4222;
+  border-radius: 9px;
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 6px rgba(60, 36, 17, 0.14);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.zone-client-depot .colis {
+  min-width: 60px;
+  max-width: 100%;
+  padding: 4px 6px;
+}
+
+.zone-dom-inspectable {
+  border-color: #059669;
+  background: rgba(236, 253, 245, 0.92);
+}
+
+/* ---------- ESPACE CLIENT (Droite — devant le comptoir) ---------- */
+.espace-client {
+  flex: 0.9 1 0;
+  min-width: 200px;
+  position: relative;
+  background: linear-gradient(180deg, #f2eadc 0%, #e5dac7 100%);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.zone-clients {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.client-carte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 245px;
+  transition: opacity 0.2s ease;
+}
+
+.client-carte.client-en-depart {
+  opacity: 0;
+}
+
+.clients-multi .client-carte {
+  max-width: 220px;
+}
+
+.client-entree {
+  animation: clientArrive 0.35s ease-out;
+}
+
+@keyframes clientArrive {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.bulle-client {
+  font-size: 0.83rem;
+  line-height: 1.35;
+  text-align: center;
+  margin-bottom: 10px;
+  border-color: #b79c7b;
+  background: #ffffff;
+  color: #1f2937;
+}
+
+.bulle-client.bulle-merci {
+  background: #f0fdf4;
+  border-color: #22c55e;
+  color: #166534;
+  font-weight: 700;
+}
+
+.bulle-client.bulle-merci::after {
+  border-top-color: #22c55e;
+}
+
+.clients-multi .bulle-client {
+  font-size: 0.74rem;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+}
+
+.bulle-client::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 9px 8px 0 8px;
+  border-style: solid;
+  border-color: #b79c7b transparent transparent transparent;
+}
+
+.client-avatar-wrap {
+  width: 72px;
+  height: 88px;
+}
+
+.clients-multi .client-avatar-wrap {
+  width: 54px;
+  height: 64px;
+}
+
+.client-nom {
+  margin-top: 2px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #4b3421;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 1px 10px;
+  border-radius: 999px;
+}
+
+/* ---------- COLIS (Vrais éléments DOM) ---------- */
+.colis {
+  --colis-accent: #b57b4a;
+  background: linear-gradient(180deg, #f6d79b 0%, #e4b162 100%);
+  border: 2px solid #7c4d24;
+  border-top: 5px solid var(--colis-accent);
+  border-radius: 9px;
+  padding: 5px 9px;
+  min-width: 74px;
+  max-width: 146px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(60, 36, 17, 0.2);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.colis-etiquette {
+  font-family: var(--font-code);
+  font-size: 0.67rem;
+  font-weight: 700;
+  background: #fffbeb;
+  color: #78350f;
+  padding: 1px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(120, 53, 15, 0.2);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.colis-valeur {
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #2d1808;
+  margin-top: 2px;
+  word-break: break-word;
+  text-align: center;
+}
+
+.colis-dom {
+  cursor: pointer;
+  border-width: 2.5px;
+}
+
+.colis-simple-text {
+  font-family: var(--font-code);
+  font-size: 0.92rem;
+  font-weight: 900;
+  color: #1f2937;
+  padding: 8px 14px;
+}
+
+.colis-mystere {
+  --colis-accent: #dc2626;
+  background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #b91c1c;
+  animation: mysterePulse 1.5s ease-in-out infinite;
+}
+
+.colis-mystere .colis-valeur {
+  font-size: 1.35rem;
+  color: #b91c1c;
+  line-height: 1.1;
+}
+
+@keyframes mysterePulse {
+  0%, 100% {
+    box-shadow: 0 3px 8px rgba(185, 28, 28, 0.22);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.28), 0 4px 12px rgba(185, 28, 28, 0.3);
+  }
+}
+
+.colis-pris,
+.colis-emporte {
+  opacity: 0 !important;
+  transition: opacity 0.12s ease;
+}
+
+.colis-entree-tapis {
+  animation: colisPop 0.28s ease-out;
+}
+
+.colis-maj {
+  animation: colisMaj 0.42s ease;
+}
+
+.colis-scan {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+}
+
+.colis-conserve {
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.4);
+}
+
+.colis-supprime {
+  border-color: #dc2626;
+  background: #fecaca;
+  transform: scale(0.65) rotate(12deg);
+  opacity: 0.25;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.colis-genere {
+  animation: colisPop 0.2s ease-out;
+}
+
+.colis-livre-pop {
+  animation: colisLivre 0.3s ease-out;
+}
+
+/* ---------- CALQUE D'ANIMATION PHYSIQUE (MARCHE & PORT DE COLIS) ---------- */
+.calque-animation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 25;
+  overflow: hidden;
+}
+
+.acteur-flottant {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+  filter: drop-shadow(0 6px 10px rgba(31, 41, 55, 0.24));
+}
+
+.acteur-sprite {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.14s ease;
+}
+
+.acteur-sprite.orientation-gauche {
+  transform: scaleX(-1);
+}
+
+.acteur-flottant.en-marche .acteur-sprite {
+  animation: marcheRebond 0.26s ease-in-out infinite;
+}
+
+.acteur-flottant.en-marche .acteur-sprite.orientation-gauche {
+  animation: marcheRebondGauche 0.26s ease-in-out infinite;
+}
+
+.acteur-flottant.en-marche .perso-jambe-g {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: pasGauche 0.26s ease-in-out infinite;
+}
+
+.acteur-flottant.en-marche .perso-jambe-d {
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: pasDroite 0.26s ease-in-out infinite;
+}
+
+/* Colis porté physiquement devant le personnage */
+.acteur-colis-slot {
+  position: absolute;
+  top: 34%;
+  left: 52%;
+  transform: translate(-10%, -15%) scale(0.76);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.acteur-colis-slot.bras-gauche {
+  left: auto;
+  right: 52%;
+  transform: translate(10%, -15%) scale(0.76);
+}
+
+.colis-porte {
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.28);
+}
+
+.colis-pile-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.acteur-bulle-flottante {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  margin-bottom: 6px;
+}
+
+@keyframes marcheRebond {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes marcheRebondGauche {
+  0%, 100% {
+    transform: scaleX(-1) translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: scaleX(-1) translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes pasGauche {
+  0%, 100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(18deg);
+  }
+}
+
+@keyframes pasDroite {
+  0%, 100% {
+    transform: rotate(18deg);
+  }
+  50% {
+    transform: rotate(-18deg);
+  }
+}
+
+@keyframes colisPop {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes colisMaj {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  }
+  50% {
+    transform: scale(1.12);
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes colisLivre {
+  0% {
+    transform: scale(0.82);
+  }
+  65% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

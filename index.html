@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atelier &amp; Comptoir — Apprendre JavaScript</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23b57b4a'/%3E%3Crect x='12' y='18' width='40' height='32' rx='5' fill='%23f5d08a' stroke='%235c3a1e' stroke-width='3'/%3E%3Cpath d='M12 28h40M32 18v32' stroke='%235c3a1e' stroke-width='3'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <div id="app">
+    <!-- ÉCRAN D'ACCUEIL -->
+    <section id="ecran-accueil" class="ecran-accueil" aria-label="Écran d'accueil">
+      <div class="accueil-carte">
+        <div class="accueil-badge">Mode Histoire &bull; 40 exercices &bull; ~7 heures</div>
+        <div class="accueil-illustration" aria-hidden="true">
+          <div class="mini-colis">
+            <span class="mini-colis-tag">var colis</span>
+            <span class="mini-colis-val">"bonjour"</span>
+          </div>
+          <div class="mini-fleche">&#10140;</div>
+          <div class="mini-comptoir">Comptoir</div>
+        </div>
+        <h1 class="accueil-titre">Atelier &amp; Comptoir</h1>
+        <p class="accueil-sous-titre">
+          Apprends les bases du JavaScript pas à pas aux côtés de <strong>Léo</strong> :
+          variables <code>var</code>, conditions <code>if / else</code>, boucles <code>for</code>,
+          fonctions et manipulation du DOM.
+        </p>
+
+        <div class="accueil-actions">
+          <button id="btn-commencer" class="btn btn-principal btn-grand" type="button">
+            Commencer
+          </button>
+          <button id="btn-accueil-niveaux" class="btn btn-secondaire" type="button">
+            Choisir un niveau
+          </button>
+        </div>
+
+        <div id="accueil-progression" class="accueil-progression" hidden>
+          <span id="accueil-progression-texte"></span>
+          <button id="btn-reinitialiser-progression" class="btn-lien" type="button">
+            Recommencer à zéro
+          </button>
+        </div>
+
+        <div class="accueil-chapitres">
+          <div class="accueil-chap-item"><strong>1.</strong> Variables <code>var</code></div>
+          <div class="accueil-chap-item"><strong>2.</strong> Conditions <code>if/else</code></div>
+          <div class="accueil-chap-item"><strong>3.</strong> Boucles <code>for</code></div>
+          <div class="accueil-chap-item"><strong>4.</strong> Fonctions</div>
+          <div class="accueil-chap-item"><strong>5.</strong> DOM &amp; <code>appendChild</code></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÉCRAN DE JEU PLEIN ÉCRAN -->
+    <section id="ecran-jeu" class="ecran-jeu" hidden aria-label="Interface de jeu Atelier et Comptoir">
+      <!-- Barre supérieure compacte -->
+      <header class="hud-barre">
+        <div class="hud-gauche">
+          <button id="btn-menu" class="btn btn-hud" type="button" title="Retour au menu">
+            &#8962; Accueil
+          </button>
+          <div class="hud-marque">Atelier &amp; Comptoir</div>
+          <span id="hud-chapitre" class="hud-badge-chapitre">Chapitre 1</span>
+          <span id="hud-niveau-titre" class="hud-niveau-titre">1. Premier colis</span>
+        </div>
+
+        <div class="hud-centre">
+          <div class="hud-progression-wrap" title="Progression du Mode Histoire">
+            <div class="hud-progression-piste">
+              <div id="hud-progression-barre" class="hud-progression-barre"></div>
+            </div>
+            <span id="hud-progression-label" class="hud-progression-label">0 / 40</span>
+          </div>
+        </div>
+
+        <div class="hud-droite">
+          <button id="btn-niveau-precedent" class="btn btn-hud" type="button" title="Exercice précédent">
+            &#9664;
+          </button>
+          <button id="btn-ouvrir-niveaux" class="btn btn-hud" type="button">
+            Niveaux
+          </button>
+          <button id="btn-niveau-suivant" class="btn btn-hud" type="button" title="Exercice suivant">
+            &#9654;
+          </button>
+          <button id="btn-plein-ecran" class="btn btn-hud" type="button" title="Plein écran (F11)">
+            &#9974; Plein écran
+          </button>
+        </div>
+      </header>
+
+      <!-- PARTIE HAUTE : ZONE DE JEU (ATELIER à gauche + ESPACE CLIENT à droite) -->
+      <main id="zone-de-jeu" class="zone-de-jeu">
+        <!-- ATELIER (gauche) -->
+        <section id="atelier" class="atelier" aria-label="Atelier de préparation">
+          <div class="zone-etiquette-fond">ATELIER</div>
+
+          <!-- 1. TAPIS ROULANT (vertical à gauche de l'atelier) -->
+          <div id="tapis-roulant" class="poste tapis-roulant" aria-label="Tapis roulant des variables">
+            <div class="poste-entete">
+              <span class="poste-icone" aria-hidden="true">&#9881;</span>
+              <span class="poste-nom">Tapis roulant</span>
+              <span id="tapis-sirene" class="tapis-sirene" title="Voyant d'alerte machine" aria-hidden="true">
+                <span class="sirene-dome"></span>
+              </span>
+              <span class="poste-role">var</span>
+            </div>
+            <div id="tapis-bandeau-alerte" class="tapis-bandeau-alerte" hidden>
+              ALERTE BUG MACHINE
+            </div>
+            <div class="tapis-piste">
+              <div class="tapis-bande-animee" aria-hidden="true"></div>
+              <div id="zone-colis-tapis" class="zone-colis-tapis"></div>
+            </div>
+          </div>
+
+          <!-- Colonne droite de l'atelier : Générateur (haut), Léo (centre), Centre de tri (bas) -->
+          <div class="atelier-colonne-postes">
+            <!-- 2. GÉNÉRATEUR (haut de l'atelier) -->
+            <div id="generateur" class="poste generateur" aria-label="Générateur de boucles">
+              <div class="poste-entete">
+                <span class="poste-icone" aria-hidden="true">&#10227;</span>
+                <span class="poste-nom">Générateur</span>
+                <span class="poste-role">for</span>
+                <span id="generateur-compteur" class="generateur-compteur">Prêt</span>
+              </div>
+              <div id="zone-colis-generateur" class="poste-contenu generateur-contenu"></div>
+            </div>
+
+            <!-- COLLÈGUE LÉO (PNJ) + BULLE AU-DESSUS DE LUI -->
+            <div id="zone-leo" class="zone-leo">
+              <div id="bulle-leo" class="bulle bulle-leo" role="status" aria-live="polite">
+                <div class="bulle-leo-entete">
+                  <span id="bulle-leo-auteur" class="bulle-leo-auteur">Léo</span>
+                  <span id="bulle-leo-etape" class="bulle-leo-etape"></span>
+                </div>
+                <div id="bulle-leo-texte" class="bulle-leo-texte"></div>
+                <div class="bulle-leo-actions">
+                  <button id="btn-leo-precedent" class="btn-mini" type="button" hidden>&#9664; Préc.</button>
+                  <button id="btn-leo-suivant" class="btn-mini" type="button" hidden>Suite &#9654;</button>
+                  <button id="btn-leo-indice" class="btn-mini btn-mini-indice" type="button">&#128161; Indice</button>
+                </div>
+              </div>
+              <div class="personnages-atelier">
+                <div id="leo" class="personnage-leo" title="Léo, ton collègue d'atelier">
+                  <!-- SVG injecté par sceneRenderer -->
+                </div>
+                <div id="joueur" class="personnage-joueur" title="Toi, apprenti de l'atelier">
+                  <!-- SVG injecté par sceneRenderer -->
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. CENTRE DE TRI (bas de l'atelier) -->
+            <div id="centre-de-tri" class="poste centre-de-tri" aria-label="Centre de tri des conditions">
+              <div class="poste-entete">
+                <span class="poste-icone" aria-hidden="true">&#9878;</span>
+                <span class="poste-nom">Centre de tri</span>
+                <span class="poste-role">if / else</span>
+                <div class="tri-voyants" aria-hidden="true">
+                  <span id="tri-voyant-vert" class="voyant voyant-vert" title="Conserver"></span>
+                  <span id="tri-voyant-rouge" class="voyant voyant-rouge" title="Supprimer"></span>
+                </div>
+              </div>
+              <div class="tri-contenu">
+                <div id="zone-colis-tri" class="tri-scanner"></div>
+                <div id="tri-trappe" class="tri-trappe" title="Trappe de suppression">
+                  <span class="tri-trappe-label">Corbeille</span>
+                  <span id="tri-trappe-compteur" class="tri-trappe-compteur">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMPTOIR VERTICAL (entre l'atelier et l'espace client, comme un vrai centre de poste) -->
+        <section id="comptoir" class="comptoir-vertical" aria-label="Comptoir de dépôt des colis">
+          <div class="comptoir-entete">
+            <span class="comptoir-clochette" title="Clochette du comptoir" aria-hidden="true"></span>
+            <span class="comptoir-titre-bandeau">COMPTOIR</span>
+          </div>
+          <!-- Vraies zones de dépôt DOM (ex: #comptoir-client, #boite-client, #panier-nora...) -->
+          <div id="zone-livraison-conteneur" class="zone-livraison-conteneur"></div>
+        </section>
+
+        <!-- ESPACE CLIENT (droite) -->
+        <section id="espace-client" class="espace-client" aria-label="Espace client">
+          <div class="zone-etiquette-fond">ESPACE CLIENT</div>
+
+          <!-- Zone des personnages clients + leurs bulles -->
+          <div id="zone-clients" class="zone-clients"></div>
+        </section>
+
+        <!-- Calque d'animation fluide par-dessus l'atelier, le comptoir et l'espace client -->
+        <div id="calque-animation" class="calque-animation" aria-hidden="true"></div>
+      </main>
+
+      <!-- PARTIE BASSE : ZONE DE CODE -->
+      <section id="zone-de-code" class="zone-de-code" aria-label="Éditeur de code JavaScript">
+        <div class="editeur-barre">
+          <div class="editeur-barre-gauche">
+            <span class="editeur-titre">&#128187; Zone de code</span>
+            <span id="editeur-objectif" class="editeur-objectif"></span>
+          </div>
+          <div class="editeur-barre-droite">
+            <button id="btn-memento" class="btn btn-editeur" type="button" title="Rappel de syntaxe">
+              &#128214; Mémento
+            </button>
+            <button id="btn-corrige" class="btn btn-editeur" type="button" title="Afficher le corrigé de l'exercice">
+              &#128273; Corrigé
+            </button>
+            <button id="btn-reinitialiser-code" class="btn btn-editeur" type="button" title="Réinitialiser l'éditeur">
+              &#8634; Réinitialiser
+            </button>
+            <button id="btn-executer" class="btn btn-executer" type="button" title="Exécuter le code (Ctrl+Enter)">
+              &#9654; Exécuter <kbd>Ctrl+Entrée</kbd>
+            </button>
+          </div>
+        </div>
+
+        <div class="editeur-corps">
+          <div class="editeur-saisie-wrap">
+            <div id="editeur-lignes" class="editeur-lignes" aria-hidden="true">1</div>
+            <div class="editeur-zone-superposee">
+              <pre id="editeur-surlignage" class="editeur-surlignage" aria-hidden="true"><code id="editeur-surlignage-code"></code></pre>
+              <textarea
+                id="editeur-code"
+                class="editeur-textarea"
+                spellcheck="false"
+                autocomplete="off"
+                autocapitalize="off"
+                aria-label="Éditeur de code JavaScript"
+                placeholder="// Écris ton code JavaScript ici..."
+              ></textarea>
+              <div
+                id="editeur-autocompletion"
+                class="editeur-autocompletion"
+                hidden
+                role="listbox"
+                aria-label="Suggestions de code"
+              ></div>
+            </div>
+          </div>
+
+          <aside class="editeur-console" aria-label="Journal et retours">
+            <div class="console-entete">
+              <span>Journal de l'atelier</span>
+              <span id="console-statut" class="console-statut">En attente</span>
+            </div>
+            <div id="console-sortie" class="console-sortie" role="log" aria-live="polite">
+              <div class="console-ligne console-info">Prêt ! Écris ton code puis clique sur Exécuter (ou Ctrl+Entrée).</div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </section>
+
+    <!-- MODALE SÉLECTEUR DE NIVEAUX -->
+    <div id="modale-niveaux" class="modale-fond" hidden role="dialog" aria-modal="true" aria-labelledby="modale-niveaux-titre">
+      <div class="modale-carte modale-large">
+        <div class="modale-entete">
+          <h2 id="modale-niveaux-titre">Mode Histoire — Choisir un exercice</h2>
+          <button id="btn-fermer-niveaux" class="btn-fermer" type="button" aria-label="Fermer">&times;</button>
+        </div>
+        <div id="liste-niveaux" class="modale-corps liste-niveaux"></div>
+      </div>
+    </div>
+
+    <!-- MODALE MÉMENTO SYNTAXE -->
+    <div id="modale-memento" class="modale-fond" hidden role="dialog" aria-modal="true" aria-labelledby="modale-memento-titre">
+      <div class="modale-carte">
+        <div class="modale-entete">
+          <h2 id="modale-memento-titre">Mémento JavaScript de l'Atelier</h2>
+          <button id="btn-fermer-memento" class="btn-fermer" type="button" aria-label="Fermer">&times;</button>
+        </div>
+        <div id="contenu-memento" class="modale-corps memento-corps"></div>
+      </div>
+    </div>
+
+    <!-- MODALE VICTOIRE D'EXERCICE -->
+    <div id="modale-victoire" class="modale-fond" hidden role="dialog" aria-modal="true" aria-labelledby="modale-victoire-titre">
+      <div class="modale-carte modale-victoire">
+        <div class="victoire-icone" aria-hidden="true">&#127881;</div>
+        <h2 id="modale-victoire-titre">Commande livrée !</h2>
+        <p id="modale-victoire-message" class="victoire-message"></p>
+        <div class="victoire-actions">
+          <button id="btn-rejouer-niveau" class="btn btn-secondaire" type="button">Rester ici</button>
+          <button id="btn-continuer-suivant" class="btn btn-principal" type="button">Exercice suivant &#10140;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

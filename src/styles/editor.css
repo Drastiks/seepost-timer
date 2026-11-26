@@ -1,0 +1,418 @@
+/* ==========================================================================
+   Zone de code intégrée (Partie basse) : Éditeur + Console en français
+   ========================================================================== */
+
+.zone-de-code {
+  flex: 0 0 34%;
+  min-height: 205px;
+  max-height: 360px;
+  display: flex;
+  flex-direction: column;
+  background: var(--editeur-bg);
+  border-top: 3px solid var(--bois-moyen);
+  color: #e6edf3;
+}
+
+.editeur-barre {
+  flex: 0 0 42px;
+  background: var(--editeur-surface);
+  border-bottom: 1px solid var(--editeur-bord);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.editeur-barre-gauche {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.editeur-titre {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #fbbf24;
+  white-space: nowrap;
+}
+
+.editeur-objectif {
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editeur-barre-droite {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.btn-editeur {
+  background: #2b3444;
+  color: #e2e8f0;
+  border: 1px solid #3f4b61;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  border-radius: 7px;
+}
+
+.btn-editeur:hover:not(:disabled) {
+  background: #364155;
+}
+
+.btn-executer {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(22, 163, 74, 0.35);
+}
+
+.btn-executer:hover:not(:disabled) {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.btn-executer kbd {
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+  background: rgba(0, 0, 0, 0.24);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.editeur-corps {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: hidden;
+}
+
+.editeur-saisie-wrap {
+  flex: 1.55 1 0;
+  min-width: 0;
+  display: flex;
+  background: var(--editeur-bg);
+  overflow: hidden;
+}
+
+.editeur-lignes {
+  flex: 0 0 42px;
+  padding: 12px 8px 12px 0;
+  text-align: right;
+  font-family: var(--font-code);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #64748b;
+  background: #12161d;
+  border-right: 1px solid #242c38;
+  user-select: none;
+  white-space: pre;
+  overflow: hidden;
+}
+
+.editeur-zone-superposee {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--editeur-bg);
+}
+
+.editeur-surlignage,
+.editeur-zone-superposee .editeur-textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: none;
+  font-family: var(--font-code);
+  font-size: 0.92rem;
+  font-weight: 400;
+  line-height: 1.55;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+  box-sizing: border-box;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.editeur-surlignage {
+  pointer-events: none;
+  color: #f1f5f9;
+  z-index: 1;
+  overflow: hidden;
+  background: transparent;
+}
+
+.editeur-surlignage code {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.editeur-textarea {
+  flex: 1;
+  z-index: 2;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: #f1f5f9;
+  caret-color: #f8fafc;
+  font-family: var(--font-code);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  padding: 12px 14px;
+  border: none;
+  tab-size: 2;
+}
+
+.editeur-textarea.surlignage-actif {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.editeur-textarea::selection {
+  background: rgba(56, 189, 248, 0.32);
+}
+
+.editeur-textarea::placeholder {
+  color: #4b5563;
+  -webkit-text-fill-color: #4b5563;
+}
+
+/* Couleurs de coloration syntaxique (même graisse 400 pour alignement exact du curseur) */
+.tok-comment {
+  color: #7d8ca3;
+  font-style: italic;
+}
+
+.tok-keyword {
+  color: #d29bfd;
+}
+
+.tok-api {
+  color: #4cc9f0;
+}
+
+.tok-func {
+  color: #fde68a;
+}
+
+.tok-string {
+  color: #86efac;
+}
+
+.tok-number {
+  color: #fbbf24;
+}
+
+.tok-operator {
+  color: #fb7185;
+}
+
+.tok-punct {
+  color: #cbd5e1;
+}
+
+.tok-ident {
+  color: #f1f5f9;
+}
+
+/* Menu déroulant d'autocomplétion */
+.editeur-autocompletion {
+  position: absolute;
+  z-index: 20;
+  min-width: 245px;
+  max-width: 340px;
+  background: #1e2532;
+  border: 1px solid #3c4a62;
+  border-radius: 9px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.auto-item {
+  border: none;
+  background: transparent;
+  color: #e2e8f0;
+  font-family: var(--font-ui);
+  padding: 5px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.auto-item:hover,
+.auto-item.auto-actif {
+  background: #2b384d;
+}
+
+.auto-label {
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+.auto-badge {
+  font-size: 0.64rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+.auto-badge-motcl {
+  background: rgba(192, 132, 252, 0.2);
+  color: #d8b4fe;
+}
+
+.auto-badge-atelier,
+.auto-badge-dom {
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+}
+
+.auto-badge-variable,
+.auto-badge-colis {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fde68a;
+}
+
+.auto-badge-fonction {
+  background: rgba(134, 239, 172, 0.2);
+  color: #86efac;
+}
+
+.auto-desc {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Console / Journal à droite de l'éditeur */
+.editeur-console {
+  flex: 1 1 0;
+  min-width: 240px;
+  max-width: 440px;
+  background: #11161e;
+  border-left: 1px solid var(--editeur-bord);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.console-entete {
+  flex: 0 0 30px;
+  padding: 0 10px;
+  background: #19202b;
+  border-bottom: 1px solid #263040;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.console-statut {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
+.statut-idle {
+  background: #273244;
+  color: #cbd5e1;
+}
+
+.statut-ok {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.statut-err {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.console-sortie {
+  flex: 1;
+  padding: 8px 10px;
+  overflow-y: auto;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.console-ligne {
+  padding: 5px 8px;
+  border-radius: 6px;
+  word-break: break-word;
+}
+
+.console-info {
+  background: rgba(56, 189, 248, 0.08);
+  color: #cbd5e1;
+  border-left: 3px solid #38bdf8;
+}
+
+.console-success {
+  background: rgba(34, 197, 94, 0.14);
+  color: #86efac;
+  border-left: 3px solid #22c55e;
+}
+
+.console-error {
+  background: rgba(239, 68, 68, 0.14);
+  color: #fca5a5;
+  border-left: 3px solid #ef4444;
+}
+
+/* Adaptation petits écrans */
+@media (max-width: 920px) {
+  .editeur-console {
+    min-width: 190px;
+  }
+  .hud-marque {
+    display: none;
+  }
+  .editeur-objectif {
+    display: none;
+  }
+}
